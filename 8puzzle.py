@@ -1,3 +1,4 @@
+import time
 
 #####print table#####
 def printTable(t):
@@ -59,14 +60,14 @@ def generalSearch(problem, solution, algChoice):
   frontier = []
   maxQueueSize = len(frontier)
 
-  node1 = Node(problem, 5, 2, 1, None)
-  node2 = Node(problem, 2, 1, 1, node1)
+  # node1 = Node(problem, 5, 2, 1, None)
+  # node2 = Node(problem, 2, 1, 1, node1)
   
-  frontier = [node1, node2]
-  frontier.sort(key = lambda Node: Node.f)
-  for item in frontier:
-    print(item.f)
-  print(f)
+  # frontier = [node1, node2]
+  # frontier.sort(key = lambda Node: Node.f)
+  # for item in frontier:
+  #   print(item.f)
+  # print(f)
 
   return solution
 
@@ -93,7 +94,11 @@ print('3. A* with Manhattan distance heuristic\n')
 
 algChoice = int(input('Enter your algorithm of choice (1-3): '))
 
+tick = time.perf_counter()
 test = generalSearch(problem, solution, algChoice)
+tock = time.perf_counter()
+totalTime = tock - tick
 print(test)
+print(totalTime)
 
 
