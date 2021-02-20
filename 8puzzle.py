@@ -56,8 +56,13 @@ def misplacedTiles(t, s):
         h += 1
   return h
 
-#####solution#####
+#####global variables#####
 solution = [[1, 2, 3], [4, 5, 6,], [7, 8, 0]]
+visitedNodes = set()
+expandedNodes = set()
+frontier = []
+maxQueueSize = 0
+duplicate = []
 
 #####Node Class#####
 class Node:
@@ -96,20 +101,13 @@ def findDuplicates(visitedNodes, duplicate):
 
 #####General Function#####
 def generalSearch(problem, solution, algChoice):
-  visitedNodes = set()
-  expandedNodes = set()
-  frontier = []
   maxQueueSize = len(frontier)
-  duplicate = []
 
   # node1 = Node(problem, 5, 2, 1, None)
   # node2 = Node(problem, 2, 1, 1, node1)
   
   # frontier = [node1, node2]
-  # frontier.sort(key = lambda Node: Node.f)
-  # for item in frontier:
-  #   print(item.f)
-  # print()
+
 
   frontier.append(Node(problem, 0, 0, 0, None))
   first = frontier[0]
@@ -118,65 +116,49 @@ def generalSearch(problem, solution, algChoice):
     curr = frontier[0]
     frontier.pop(0)
     expandedNodes.add(curr)
-
+    #if found, return curr
     if curr.state == solution:
       # print("right")
       return curr
-  
-    r, c = findBlank(curr.state) 
-    #up
-    duplicate = copy.deepcopy(curr.state)
-    if r > 0:
-      up(duplicate, r, c)
-      createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
-    #down
-    duplicate = copy.deepcopy(curr.state)
-    if r < 2:
-      down(duplicate, r, c)
-      createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
-    #left
-    duplicate = copy.deepcopy(curr.state)
-    if c > 0:
-      left(duplicate, r, c)
-      createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
-    #right
-    duplicate = copy.deepcopy(curr.state)
-    if c < 2:
-      right(duplicate, r, c)
-      createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
+    else:
+      r, c = findBlank(curr.state) 
+      ###operations###
+      #up
+      duplicate = copy.deepcopy(curr.state)
+      if r > 0:
+        up(duplicate, r, c)
+        createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
+      #down
+      duplicate = copy.deepcopy(curr.state)
+      if r < 2:
+        down(duplicate, r, c)
+        createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
+      #left
+      duplicate = copy.deepcopy(curr.state)
+      if c > 0:
+        left(duplicate, r, c)
+        createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
+      #right
+      duplicate = copy.deepcopy(curr.state)
+      if c < 2:
+        right(duplicate, r, c)
+        createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
 
-    if (len(frontier) > maxQueueSize):
-      maxQueueSize = len(frontier)
+      ###sort frontier based on f(n)###
+      frontier.sort(key = lambda Node: Node.f)
+      # #test
+      # for item in frontier:
+      #   printNode(item)
+      # print()
 
-    visitedNodes.add(curr)
+      if (len(frontier) > maxQueueSize):
+        maxQueueSize = len(frontier)
+      visitedNodes.add(curr)
 
-    #test
-    print("attempted puzzles:")
-    for item in visitedNodes:
-      printTable(item.state)
-
-    print("max Queue Size: ", maxQueueSize)
-    print("number of puzzles assessed: ", len(visitedNodes))
-    print("number of expanded nodes", len(expandedNodes), '\n')
-    print("expanded Nodes:")
-    for item in expandedNodes:
-      printNode(item)
-
-    return Node(duplicate, 1, 1, 1, None)
-
-    #down
-    #left
-    #right
-
-    #
-
-
-
+      return Node(duplicate, 1, 1, 1, None)
 
   return problem
   
-
-  return solution
 
 
 #####main#####
@@ -205,6 +187,19 @@ tick = time.perf_counter()
 test = generalSearch(problem, solution, algChoice)
 tock = time.perf_counter()
 totalTime = tock - tick
+
+# #test
+# print("attempted puzzles:")
+# for item in visitedNodes:
+#   printTable(item.state)
+
+# print("max Queue Size: ", maxQueueSize)
+# print("number of puzzles assessed: ", len(visitedNodes))
+# print("number of expanded nodes", len(expandedNodes), '\n')
+# print("expanded Nodes:")
+# for item in expandedNodes:
+#   printNode(item)
+
 printTable(test.state)
 print(totalTime)
 
