@@ -116,11 +116,13 @@ def generalSearch(problem, solution, algChoice, maxQueueSize):
   expandedNodes.add(root)
 
   while len(frontier) > 0:
+    curr = frontier[0]
+    visitedNodes.add(curr)
+    frontier.pop(0)
+
     if (len(frontier) > maxQueueSize):
       maxQueueSize = len(frontier)
     print("next: ", maxQueueSize)
-    curr = frontier[0]
-    frontier.pop(0)
 
     #if found, return curr
     if misplacedTiles(curr.state, solution) == 0:
@@ -157,8 +159,6 @@ def generalSearch(problem, solution, algChoice, maxQueueSize):
     # for item in frontier:
     #   printNode(item)
     # print()
-
-    visitedNodes.add(curr)
 
     printNode(curr)
     print(len(visitedNodes))
