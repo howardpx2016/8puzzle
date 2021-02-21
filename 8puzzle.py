@@ -55,7 +55,16 @@ def misplacedTiles(t, s):
       if (t[i][j] != 0) and (t[i][j] != s[i][j]):
         h += 1
   return h
-
+def manhattan(t, s):
+  distance = 0
+  for i in range(len(t)):
+    for j in range(len(t[i])):
+      if t[i][j] != 0:
+        goal_row = int((t[i][j]-1)/3)
+        goal_column = (t[i][j]-1)%3
+        distance += abs(goal_row - i) + abs(goal_column - j)
+  return distance
+  
 
 #####global variables#####
 solution = [[1, 2, 3,], [4, 5, 6,], [7, 8, 0]]
@@ -77,16 +86,25 @@ class Node:
 #####Create New Children#####
 def createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes):
   if findDuplicates(visitedNodes, duplicate) == False: #set accepts new puzzle --> puzzle is unique
-    g = curr.g + 1
-    if (algChoice == 1):
-      h = 0
-    elif (algChoice == 2):
-      h = misplacedTiles(duplicate, solution)
-    
-    f = g + h
+    f, g, h = fgh(duplicate, solution, curr)
     newNode = Node(duplicate, f, g, h, curr)
     frontier.append(newNode)
     expandedNodes.add(newNode)
+
+#####Compute f, g, h#####
+def fgh(puzzle, solution, curr):
+  if curr != None:
+    g = curr.g + 1
+  else:
+    g = 0
+  if (algChoice == 1):
+    h = 0
+  elif (algChoice == 2):
+    h = misplacedTiles(puzzle, solution)
+  elif (algChoice == 3):
+    h = manhattan(puzzle, solution)
+  f = g + h
+  return f, g, h
 
 #####Convert list to set#####
 def freeze(table):
@@ -103,13 +121,9 @@ def findDuplicates(visitedNodes, duplicate):
 #####General Function#####
 def generalSearch(problem, solution, algChoice):
   global maxQueueSize
-  root = Node(problem, 0, 0, 0, None)
 
-  if (algChoice == 1):
-    root.h = 0
-  elif (algChoice == 2):
-    root.h = misplacedTiles(root.state, solution)
-  root.f = root.g + root.h
+  f, g, h = fgh(problem, solution, None)
+  root = Node(problem, f, g, h, None)
 
   frontier.append(root)
   maxQueueSize = len(frontier)
@@ -158,14 +172,6 @@ def generalSearch(problem, solution, algChoice):
 
     ###sort frontier based on f(n)###
     frontier.sort(key = lambda Node: Node.f)
-    # #test
-    # for item in frontier:
-    #   printNode(item)
-    # print()
-
-    # printNode(curr)
-    # print(len(visitedNodes))
-    # print(len(expandedNodes))
 
   return None
   
@@ -198,8 +204,6 @@ tick = time.perf_counter()
 test = generalSearch(problem, solution, algChoice)
 tock = time.perf_counter()
 totalTime = tock - tick
-
-
 
 if (test == None):
   print('Solution was not Found')
