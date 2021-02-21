@@ -1,6 +1,48 @@
 import time
 import copy
 
+#####global variables#####
+solution = [[1, 2, 3,], [4, 5, 6,], [7, 8, 0]]
+visitedNodes = set()
+expandedNodes = set()
+frontier = []
+duplicate = []
+maxQueueSize = 0
+#presets
+preset0 = [[1, 2, 3,],
+           [4, 5, 6,], 
+           [7, 8, 0]]
+
+preset2 = [[1, 2, 3,], 
+           [4, 5, 6,], 
+           [0, 7, 8]]
+
+preset4 = [[1, 2, 3,], 
+           [5, 0, 6,], 
+           [4, 7, 8]]
+
+preset8 = [[1, 3, 6,], 
+           [5, 0, 2,], 
+           [4, 7, 8]]
+
+preset12 = [[1, 3, 6,], 
+            [5, 0, 7,], 
+            [4, 8, 2]]
+
+preset16 = [[1, 6, 7,], 
+            [5, 0, 3,], 
+            [4, 8, 2]]
+
+preset20 = [[7, 1, 2,], 
+            [4, 8, 5,], 
+            [6, 3, 0]]
+
+preset24 = [[0, 7, 2,], 
+            [4, 6, 1,], 
+            [3, 5, 8]]
+
+p = [preset0, preset2, preset4, preset8, preset12, preset16, preset20, preset24]
+
 #####print table#####
 def printTable(t):
   for i in range(len(t)):
@@ -64,15 +106,6 @@ def manhattan(t, s):
         goal_column = (t[i][j]-1)%3
         distance += abs(goal_row - i) + abs(goal_column - j)
   return distance
-  
-
-#####global variables#####
-solution = [[1, 2, 3,], [4, 5, 6,], [7, 8, 0]]
-visitedNodes = set()
-expandedNodes = set()
-frontier = []
-duplicate = []
-maxQueueSize = 0
 
 #####Node Class#####
 class Node:
@@ -178,21 +211,32 @@ def generalSearch(problem, solution, algChoice):
 
 
 #####main#####
-#input and create puzzle
-print('Create your 3x3 puzzle. Make sure it can be solved')
-print('(Use 0 as a blank, numbers 1-8 for the tiles)\n')
+puzzleChoice = int(input('Enter 0 to use a 3x3 preset, 1 to create your own: '))
+if puzzleChoice == 0:
+  #use preset
+  print('Here are your options:')
+  for i in range(len(p)):
+    print('Puzzle ', i, ':')
+    printTable(p[i])
+  puzzleNum = int(input('Select your puzzle of choice (0-7): '))
+  problem = p[puzzleNum]
+  print('You have chosen puzzle ', puzzleNum, '.')
+  printTable(problem)
+elif puzzleChoice == 1:
+  #create puzzle
+  print('Create your nxn puzzle. Make sure it can be solved')
+  print('(Use 0 as a blank, numbers 1-8 for the tiles)\n')
 
-row1 = [int(item) for item in input('Enter 3 numbers for row 1: ').split()]
-row2 = [int(item) for item in input('Enter 3 numbers for row 2: ').split()]
-row3 = [int(item) for item in input('Enter 3 numbers for row 3: ').split()]
-print()
+  row1 = [int(item) for item in input('Enter 3 numbers for row 1: ').split()]
+  row2 = [int(item) for item in input('Enter 3 numbers for row 2: ').split()]
+  row3 = [int(item) for item in input('Enter 3 numbers for row 3: ').split()]
+  print()
 
-print('Your puzzle is:')
-problem = [row1, row2, row3] 
-printTable(problem)
-print()
+  print('Your puzzle is:')
+  problem = [row1, row2, row3] 
+  printTable(problem)
 
-print('Your choices of algorithms are:')
+print('\nYour choices of algorithms are:')
 print('1. Uniform Cost Search')
 print('2. A* with Misplaced Tile heuristic')
 print('3. A* with Manhattan distance heuristic\n')
@@ -201,19 +245,19 @@ algChoice = int(input('Enter your algorithm of choice (1-3): '))
 print()
 
 tick = time.perf_counter()
-test = generalSearch(problem, solution, algChoice)
+result = generalSearch(problem, solution, algChoice)
 tock = time.perf_counter()
 totalTime = tock - tick
 
-if (test == None):
+if (result == None):
   print('Solution was not Found')
 else:
   print('Solution Found!')
-  print('Depth: ', test.g)
+  print('Depth: ', result.g)
   print("max Queue Size: ", maxQueueSize)
   print("number of puzzles assessed: ", len(visitedNodes))
   print("number of expanded nodes", len(expandedNodes), '\n')
-  printNode(test)
+  printNode(result)
 
 print('Time elpased (seconds): ', totalTime)
 
