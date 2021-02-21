@@ -1,6 +1,7 @@
 import time
 import copy
 
+
 #####global variables#####
 solution = [[1, 2, 3,], [4, 5, 6,], [7, 8, 0]]
 visitedNodes = set()
@@ -64,6 +65,7 @@ def printNode(node):
   else: 
     print('No parent, this is the root')
   print()
+  # print('The best state to expand with a f(n) of ', , ' g(n) of ', , ' and h(n) of ', , 'is...')
 
 #####operations#####
 def findBlank(t):
@@ -166,6 +168,7 @@ def generalSearch(problem, solution, algChoice):
   while len(frontier) > 0:
     curr = frontier[0]
     visitedNodes.add(curr)
+    printTable(curr.state)
 
     if (len(frontier) > maxQueueSize):
       maxQueueSize = len(frontier)
@@ -202,7 +205,7 @@ def generalSearch(problem, solution, algChoice):
       createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
 
     frontier.pop(0)
-
+    print('The best state to expand with a f(n) of ', curr.f, ' g(n) of ', curr.g, ' and h(n) of ', curr.h, 'is...')
     ###sort frontier based on f(n)###
     frontier.sort(key = lambda Node: Node.f)
 
@@ -214,10 +217,10 @@ def generalSearch(problem, solution, algChoice):
 puzzleChoice = int(input('Enter 0 to use a 3x3 preset, 1 to create your own: '))
 if puzzleChoice == 0:
   #use preset
-  print('Here are your options:')
-  for i in range(len(p)):
-    print('Puzzle ', i, ':')
-    printTable(p[i])
+  # print('Here are your options:')
+  # for i in range(len(p)):
+  #   print('Puzzle ', i, ':')
+  #   printTable(p[i])
   puzzleNum = int(input('Select your puzzle of choice (0-7): '))
   problem = p[puzzleNum]
   print('You have chosen puzzle ', puzzleNum, '.')
@@ -252,12 +255,12 @@ totalTime = tock - tick
 if (result == None):
   print('Solution was not Found')
 else:
-  print('Solution Found!')
+  print('Algorithm ', algChoice, ': Solution Found!')
   print('Depth: ', result.g)
   print("max Queue Size: ", maxQueueSize)
   print("number of puzzles assessed: ", len(visitedNodes))
-  print("number of expanded nodes", len(expandedNodes), '\n')
-  printNode(result)
+  print("number of expanded nodes: ", len(expandedNodes), '\n')
+
 
 print('Time elpased (seconds): ', totalTime)
 
