@@ -101,7 +101,8 @@ def findDuplicates(visitedNodes, duplicate):
   return False
 
 #####General Function#####
-def generalSearch(problem, solution, algChoice, maxQueueSize):
+def generalSearch(problem, solution, algChoice):
+  global maxQueueSize
   root = Node(problem, 0, 0, 0, None)
 
   if (algChoice == 1):
@@ -112,17 +113,16 @@ def generalSearch(problem, solution, algChoice, maxQueueSize):
 
   frontier.append(root)
   maxQueueSize = len(frontier)
-  print("og: ", maxQueueSize)
+  # print("og: ", maxQueueSize)
   expandedNodes.add(root)
 
   while len(frontier) > 0:
     curr = frontier[0]
     visitedNodes.add(curr)
-    frontier.pop(0)
 
     if (len(frontier) > maxQueueSize):
       maxQueueSize = len(frontier)
-    print("next: ", maxQueueSize)
+    # print("next: ", maxQueueSize)
 
     #if found, return curr
     if misplacedTiles(curr.state, solution) == 0:
@@ -130,10 +130,11 @@ def generalSearch(problem, solution, algChoice, maxQueueSize):
       return curr
 
     ####else####
-    r, c = findBlank(curr.state) 
+    duplicate = copy.deepcopy(curr.state)
+    r, c = findBlank(duplicate) 
     #operations
     #up
-    duplicate = copy.deepcopy(curr.state)
+    
     if r > 0:
       up(duplicate, r, c)
       createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
@@ -153,6 +154,8 @@ def generalSearch(problem, solution, algChoice, maxQueueSize):
       right(duplicate, r, c)
       createChild(algChoice, curr, duplicate, frontier, visitedNodes, expandedNodes)
 
+    frontier.pop(0)
+
     ###sort frontier based on f(n)###
     frontier.sort(key = lambda Node: Node.f)
     # #test
@@ -160,9 +163,9 @@ def generalSearch(problem, solution, algChoice, maxQueueSize):
     #   printNode(item)
     # print()
 
-    printNode(curr)
-    print(len(visitedNodes))
-    print(len(expandedNodes))
+    # printNode(curr)
+    # print(len(visitedNodes))
+    # print(len(expandedNodes))
 
   return None
   
@@ -192,7 +195,7 @@ algChoice = int(input('Enter your algorithm of choice (1-3): '))
 print()
 
 tick = time.perf_counter()
-test = generalSearch(problem, solution, algChoice, maxQueueSize)
+test = generalSearch(problem, solution, algChoice)
 tock = time.perf_counter()
 totalTime = tock - tick
 
